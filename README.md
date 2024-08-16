@@ -26,6 +26,4 @@ Q - Does it change overtime?
 
 [DONE] ANOVA for a given hour for a given month, across 4Y blocks and 11Y blocks
 
-
-
-Can we look at the total daily value for each day in different months? Maybe the hourly fluctuations are too much. Let us try the same things with average daily power generation for each month. And see whether any different. 44 years, Monthly average for 12 months. Then try 4 years blocks and 11 year blocks. And see how the results look like. Maybe plot the graph as as well for each month for 44 years and visually see whether any trend. 
+[DONE] Can we look at the total daily value for each day in different months? Maybe the hourly fluctuations are too much. Let us try the same things with average daily power generation for each month. And see whether any different. 44 years, Monthly average for 12 months. Then try 4 years blocks and 11 year blocks. And see how the results look like. Maybe plot the graph as as well for each month for 44 years and visually see whether any trend. 
