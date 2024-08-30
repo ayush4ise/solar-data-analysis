@@ -221,7 +221,7 @@ class EDA():
 
             # Save the figure
             plt.tight_layout()
-            plt.savefig(f'visualizations/sigma_plots/{month}_{col}th_hour.png')
+            plt.savefig(f'visualizations/{city}/sigma_plots/{month}_{col}th_hour.png')
             plt.close()
 
         sheet_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -234,4 +234,37 @@ class EDA():
         logging.info(f"Hourly control charts for {city} plotted and saved to visualizations/sigma_plots.")
 
 
-    
+    def hourly_box_plots(city:str):
+        """
+        Public class method that plots hourly box plots for the data and saves the plots to visualizations folder.
+
+        Parameters
+        ----------
+        city : str
+            The city name.
+
+        Returns
+        -------
+        None
+        """
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        logging.info(f"Plotting hourly box plots for {city}.")
+
+        sheet_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+        for sheet in sheet_names:
+            data = pd.read_excel(f'transformed_data/{city}/monthly_means.xlsx', sheet_name=sheet, index_col=0)
+            plt.figure(figsize=(14, 8))
+            sns.boxplot(data=data, palette='Set3')
+            plt.title(f'Hourly Box Plots for {sheet}', fontsize=16, fontweight='bold')
+            plt.xlabel('Hour', fontsize=14)
+            plt.ylabel('Electricity (in kW)', fontsize=14)
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            plt.savefig(f'visualizations/{city}/box_plots/{sheet}_box_plot.png')
+            plt.close
+
+        logging.info(f"Hourly box plots for {city} plotted and saved to visualizations/box_plots.")
+
