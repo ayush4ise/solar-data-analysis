@@ -20,9 +20,11 @@ def main():
     EDA.hourly_box_plots(city)
 
     logging.info(f"Performing ANOVA tests for {city}")
-    ANOVA.hourly_anova(city, data)
-    ANOVA.fourYblocks_anova(city, data)
-    ANOVA.elevenYblocks_anova(city, data)
+    ANOVA.normal_anova(city, data, 'hourly')
+    ANOVA.fourYblocks_anova(city, data, 'hourly')
+    ANOVA.elevenYblocks_anova(city, data, 'hourly')
+
+    
 
 
 if __name__ == "__main__":
