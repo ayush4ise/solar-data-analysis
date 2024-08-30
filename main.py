@@ -24,28 +24,28 @@ def main():
     logging.info(f"Performing EDA for {city}")
 
     EDA.calculate_monthly_means(city, data, 'hourly')
-    # EDA.hourly_control_charts(city)
-    # EDA.hourly_box_plots(city)
+    EDA.hourly_control_charts(city)
+    EDA.hourly_box_plots(city)
 
-    # EDA.calculate_monthly_means(city, data, 'daily')
-    # EDA.daily_mean_plots(city)
+    EDA.calculate_monthly_means(city, data, 'daily')
+    EDA.daily_mean_plots(city)
 
-    # EDA.yearly_plots(city, data, 1)
-    # EDA.yearly_plots(city, data, 4)
-    # EDA.yearly_plots(city, data, 5)
+    EDA.yearly_plots(city, data, 1)
+    EDA.yearly_plots(city, data, 4)
+    EDA.yearly_plots(city, data, 5)
 
-    # logging.info(f"Performing ANOVA tests for {city}")
-    # ANOVA.normal_anova(city, data, 'hourly')
-    # ANOVA.fourYblocks_anova(city, data, 'hourly')
-    # ANOVA.elevenYblocks_anova(city, data, 'hourly')
+    logging.info(f"Performing ANOVA tests for {city}")
+    ANOVA.normal_anova(city, data, 'hourly')
+    ANOVA.fourYblocks_anova(city, data, 'hourly')
+    ANOVA.elevenYblocks_anova(city, data, 'hourly')
 
-    # ANOVA.normal_anova(city, data, 'daily')
-    # ANOVA.fourYblocks_anova(city, data, 'daily')
-    # ANOVA.elevenYblocks_anova(city, data, 'daily')
+    ANOVA.normal_anova(city, data, 'daily')
+    ANOVA.fourYblocks_anova(city, data, 'daily')
+    ANOVA.elevenYblocks_anova(city, data, 'daily')
 
-    # logging.info(f"Performing t-tests for {city}")
-    # TTest(city).ttest_results(data, 4)
-    # TTest(city).ttest_results(data, 11)
+    logging.info(f"Performing t-tests for {city}")
+    TTest(city).ttest_results(data, 4)
+    TTest(city).ttest_results(data, 11)
 
 
 if __name__ == "__main__":
