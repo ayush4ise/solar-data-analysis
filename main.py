@@ -4,6 +4,8 @@ import os
 import logging
 
 from utils import *
+from eda_utils import *
+from anova_utils import *
 
 def main():
     city = 'Brisbane'
