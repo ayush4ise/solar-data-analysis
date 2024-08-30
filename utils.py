@@ -96,7 +96,7 @@ class CSVInputFetcher(InputFetcher):
 
         data = pd.DataFrame()
         
-        for year in range(year_range[0], year_range[1]):
+        for year in range(year_range[0], year_range[1]+1):
             file_name = path + f"{year}.csv"
             if not os.path.exists(file_name):
                 logging.error(f"File {file_name} does not exist.")
