@@ -107,3 +107,52 @@ class CSVInputFetcher(InputFetcher):
         logging.info(f"Aggregated data fetched from {path} for years {year_range[0]} to {year_range[1]}.")
 
         return data
+    
+
+def File_Map(city:str):
+    """
+    This function creates the necessare folder structure for a given city, so that all the results can be saved in the correct folders.
+
+    Parameters
+    ----------
+    city : str
+
+    Returns
+    -------
+    None
+    """
+    # visualizations/
+    # {city}/
+    # daily_mean_plots/
+    # box_plots/
+    # sigma_plots/
+
+
+    # transformed_data/
+    # {city}/
+
+    # results/
+    # {city}/
+
+    if not os.path.exists('visualizations'):
+        os.makedirs('visualizations')
+    if not os.path.exists(f'visualizations/{city}'):
+        os.makedirs(f'visualizations/{city}')
+    if not os.path.exists(f'visualizations/{city}/daily_mean_plots'):
+        os.makedirs(f'visualizations/{city}/daily_mean_plots')
+    if not os.path.exists(f'visualizations/{city}/box_plots'):
+        os.makedirs(f'visualizations/{city}/box_plots')
+    if not os.path.exists(f'visualizations/{city}/sigma_plots'):
+        os.makedirs(f'visualizations/{city}/sigma_plots')
+
+    if not os.path.exists('transformed_data'):
+        os.makedirs('transformed_data')
+    if not os.path.exists(f'transformed_data/{city}'):
+        os.makedirs(f'transformed_data/{city}')
+
+    if not os.path.exists('results'):
+        os.makedirs('results')
+    if not os.path.exists(f'results/{city}'):
+        os.makedirs(f'results/{city}')
+
+    logging.info(f"Folder structure created for {city}.")

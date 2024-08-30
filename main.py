@@ -11,6 +11,8 @@ from ttest_utils import *
 def main():
     city = 'Brisbane'
 
+    File_Map(city)
+
     data = CSVInputFetcher.fetch_aggregated_data(CSVInputFetcher.city_filename_prefix(city), [1980, 2023])
 
     data.drop(columns=['time'], inplace=True)
