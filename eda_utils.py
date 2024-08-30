@@ -42,7 +42,7 @@ class EDA():
         if agg == 'hourly':
             for month in range(1,13):
                 for hour in range(24):
-                    monthly_means[(month, hour)] = [data[(data['local_time'].dt.month == month) & (data['local_time'].dt.hour == hour)]['electricity'].mean() for year in range(1980, 2024)]
+                    monthly_means[(month, hour)] = [data[(data['local_time'].dt.year == year) & (data['local_time'].dt.month == month) & (data['local_time'].dt.hour == hour)]['electricity'].mean() for year in range(1980, 2024)]
             
             monthly_means = pd.DataFrame(monthly_means, index=range(1980, 2024))
 
@@ -210,10 +210,10 @@ class EDA():
             plt.grid(True, linestyle='--', alpha=0.6)
             plt.xlabel('Year', fontsize=14, fontweight='bold')
             plt.ylabel('Electricity (kWh)', fontsize=14, fontweight='bold')
-            plt.title(f'Average Daily Electricity Production in Jakarta [{name}]', fontsize=16, fontweight='bold')
+            plt.title(f'Average Daily Electricity Production in {city} [{name}]', fontsize=16, fontweight='bold')
             plt.xticks(fontsize=12)
             plt.yticks(fontsize=12)
-            plt.ylim(0, 10000)
+            # plt.ylim(0, 10000)
             plt.savefig(f'visualizations/{city}/daily_mean_plots/{month}.png')
             plt.close()
 
@@ -239,6 +239,8 @@ class EDA():
         import matplotlib.pyplot as plt
 
         logging.info(f"Plotting yearly plots for {city} with {agg} yearly aggregation.")
+
+        data = data.copy()
 
         data['local_time'] = data['local_time'].dt.year
         data = data.groupby('local_time').sum()
@@ -272,7 +274,7 @@ class EDA():
         plt.figure(figsize=(20,10))
 
         # Plotting the data with customizations
-        plt.plot(data['electricity'], color='blue', linestyle='-', linewidth=2, marker='o', markersize=6)
+        plt.plot(data, color='blue', linestyle='-', linewidth=2, marker='o', markersize=6)
 
         # Adding grid lines
         plt.grid(True, linestyle='--', alpha=0.6)
