@@ -125,7 +125,7 @@ class EDA():
         """
         self.city = city
 
-    def calculate_monthly_means(city:str):
+    def calculate_monthly_means(city:str, data:pd.DataFrame):
         """
         Public class method that calculates the monthly means of the data and saves the data to monthly sheet in the excel file.
 
@@ -133,17 +133,14 @@ class EDA():
         ----------
         city : str
             The city name.
+        data : pd.DataFrame
+            The data in a pandas DataFrame.
 
         Returns
         -------
         None
         """
         logging.info(f"Calculating monthly means for {city}.")
-
-        data = CSVInputFetcher().fetch_aggregated_data(CSVInputFetcher().city_filename_prefix(city), [1980, 2023])
-
-        data.drop(columns=['time'], inplace=True)
-        data['local_time'] = pd.to_datetime(data['local_time'])
 
         monthly_means = {}
 
@@ -268,3 +265,156 @@ class EDA():
 
         logging.info(f"Hourly box plots for {city} plotted and saved to visualizations/box_plots.")
 
+    
+
+class ANOVA():
+    """
+    Class that performs ANOVA analysis.
+    """
+
+    def __init__(self, city:str):
+        """
+        Constructor for the ANOVA class.
+
+        Parameters
+        ----------
+        city : str
+            The city name.
+        """
+        self.city = city
+
+    def hourly_anova(city:str, data:pd.DataFrame):
+        """
+        Public class method that performs ANOVA analysis on the data to check if the means of the data (for a given hour and given month) are different for different years
+        and saves the results to results folder.
+
+        Parameters
+        ----------
+        city : str
+            The city name.
+        data : pd.DataFrame
+            The data in a pandas DataFrame.
+
+        Returns
+        -------
+        None
+        """
+        from scipy.stats import f_oneway
+
+        logging.info(f"Performing ANOVA for hourly data for {city}.")
+
+        data_anova = {}
+
+        for month in range(1, 13):
+            data_anova[month] = []
+            for hour in range(24):
+                data = [list(data[(data['local_time'].dt.year == year) & (data['local_time'].dt.month == month) & (data['local_time'].dt.hour == hour)]['electricity']) for year in range(1981, 2024)]
+                f, p = f_oneway(*data)
+                data_anova[month].append([f, p])
+
+        data_anova = pd.DataFrame(data_anova, index=range(24))
+
+        # store f-values in one sheet and p-values in another
+        f_values = data_anova.applymap(lambda x: x[0])
+        p_values = data_anova.applymap(lambda x: x[1])
+
+        f_values.to_excel(f'results/{city}/hourly_anova.xlsx', sheet_name='F-Values')
+
+        with pd.ExcelWriter(f'results/{city}/hourly_anova.xlsx', engine='openpyxl', mode='a') as writer:
+            p_values.to_excel(writer, sheet_name='P-Values')
+
+        logging.info(f"ANOVA for hourly data for {city} performed and results saved to results/{city}/hourly_anova.xlsx.")
+
+
+    def fourYblocks_anova(city:str, data:pd.DataFrame):
+        """
+        Public class method that performs ANOVA analysis on the data to check if the means of the data (for a given 4-year block) are different for different years
+        and saves the results to results folder.
+
+        Parameters
+        ----------
+        city : str
+            The city name.
+        data : pd.DataFrame
+            The data in a pandas DataFrame.
+
+        Returns
+        -------
+        None
+        """
+        from scipy.stats import f_oneway
+
+        logging.info(f"Performing ANOVA for 4-year blocks for {city}.")
+
+        data_anova = {}
+
+        for month in range(1, 13):
+            data_anova[month] = []
+            for hour in range(24):
+                data = [list(data[(data['local_time'].dt.year == year) & (data['local_time'].dt.month == month) & (data['local_time'].dt.hour == hour)]['electricity']) for year in range(1980, 2024)]
+                # make further 4 year groups in the data
+                # each year element is already in a list, so make a big list with the 4 year data
+                data = [data[i]+data[i+1]+data[i+2]+data[i+3] for i in range(0, len(data), 4)]
+
+                f, p = f_oneway(*data)
+                data_anova[month].append([f, p])
+
+        data_anova = pd.DataFrame(data_anova, index=range(24))
+
+        # store f-values in one sheet and p-values in another
+        f_values = data_anova.applymap(lambda x: x[0])
+        p_values = data_anova.applymap(lambda x: x[1])
+
+        f_values.to_excel(f'results/{city}/4Yblocks_anova.xlsx', sheet_name='F-Values')
+                          
+        with pd.ExcelWriter('results/{city}/4Yblocks_anova.xlsx', engine='openpyxl', mode='a') as writer:
+            p_values.to_excel(writer, sheet_name='P-Values')
+
+        logging.info(f"ANOVA for 4-year blocks for {city} performed and results saved to results/{city}/4Yblocks_anova.xlsx.")
+
+
+    def elevenYblocks_anova(city:str, data:pd.DataFrame):
+        """
+        Public class method that performs ANOVA analysis on the data to check if the means of the data (for a given 11-year block) are different for different years
+        and saves the results to results folder.
+
+        Parameters
+        ----------
+        city : str
+            The city name.
+        data : pd.DataFrame
+            The data in a pandas DataFrame.
+
+        Returns
+        -------
+        None
+        """
+        from scipy.stats import f_oneway
+
+        logging.info(f"Performing ANOVA for 11-year blocks for {city}.")
+
+        data_anova = {}
+
+        for month in range(1, 13):
+            data_anova[month] = []
+            for hour in range(24):
+                data = [list(data[(data['local_time'].dt.year == year) & (data['local_time'].dt.month == month) & (data['local_time'].dt.hour == hour)]['electricity']) for year in range(1980, 2024)]
+                # make further 11 year groups in the data
+                # each year element is already in a list, so make a big list with the 11 year data
+                data = [data[i]+data[i+1]+data[i+2]+data[i+3]+data[i+4]+data[i+5]+data[i+6]+data[i+7]+data[i+8]+data[i+9]+data[i+10] for i in range(0, len(data), 11)]
+
+                f, p = f_oneway(*data)
+                data_anova[month].append([f, p])
+
+        data_anova = pd.DataFrame(data_anova, index=range(24))
+
+        # store f-values in one sheet and p-values in another
+        f_values = data_anova.applymap(lambda x: x[0])
+        p_values = data_anova.applymap(lambda x: x[1])
+
+        f_values.to_excel(f'results/{city}/11Yblocks_anova.xlsx', sheet_name='F-Values')
+                          
+        with pd.ExcelWriter('results/{city}/11Yblocks_anova.xlsx', engine='openpyxl', mode='a') as writer:
+            p_values.to_excel(writer, sheet_name='P-Values')
+
+        logging.info(f"ANOVA for 11-year blocks for {city} performed and results saved to results/{city}/11Yblocks_anova.xlsx.")
