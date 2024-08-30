@@ -218,3 +218,52 @@ class EDA():
             plt.close()
 
         logging.info(f"Daily mean plots for {city} plotted and saved to visualizations folder.")
+
+    def yearly_plots(city:str, data:pd.DataFrame):
+        """
+        Public class method that plots hourly box plots for the data and saves the plots to visualizations folder.
+
+        Parameters
+        ----------
+        city : str
+            The city name.
+
+        Returns
+        -------
+        None
+        """
+        import matplotlib.pyplot as plt
+
+        logging.info(f"Plotting yearly plots for {city}.")
+
+        data['local_time'] = data['local_time'].dt.year
+        data = data.groupby('local_time').sum()
+        #data.reset_index(inplace=True)
+        data = data.iloc[:-1,:]
+
+        # Create the plot with a larger figure size
+        plt.figure(figsize=(20,10))
+
+        # Plotting the data with customizations
+        plt.plot(data['electricity'], color='blue', linestyle='-', linewidth=2, marker='o', markersize=6)
+
+        # Adding grid lines
+        plt.grid(True, linestyle='--', alpha=0.6)
+
+        # Customizing the labels and title
+        plt.xlabel('Year', fontsize=14, fontweight='bold')
+        plt.ylabel('Electricity ($10^6$ kWh)', fontsize=14, fontweight='bold')
+        plt.title(f'Yearly Electricity Production in {city}', fontsize=16, fontweight='bold')
+
+        # Adjusting the ticks
+        plt.xticks(fontsize=12)
+        plt.yticks(fontsize=12)
+
+        # Adding limit to the y-axis
+        plt.ylim(0, 2500000)
+
+        # Save the plot
+        plt.savefig(f'visualizations/{city}/yearly_plot.png')
+        plt.close()
+
+        logging.info(f"Yearly plot for {city} plotted and saved to visualizations folder.")
