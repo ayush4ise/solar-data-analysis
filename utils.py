@@ -246,7 +246,7 @@ class EDA():
         sheet_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
         for sheet in sheet_names:
-            data = pd.read_excel(f'transformed_data/{city}/monthly_means.xlsx', sheet_name=sheet, index_col=0)
+            data = pd.read_excel(f'transformed_data/{city}/monthly_hourly_means.xlsx', sheet_name=sheet, index_col=0)
             for col in data.columns:
                 make_sigma_plot(data, col, sheet)        
 
@@ -274,7 +274,7 @@ class EDA():
         sheet_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
         for sheet in sheet_names:
-            data = pd.read_excel(f'transformed_data/{city}/monthly_means.xlsx', sheet_name=sheet, index_col=0)
+            data = pd.read_excel(f'transformed_data/{city}/monthly_hourly_means.xlsx', sheet_name=sheet, index_col=0)
             plt.figure(figsize=(14, 8))
             sns.boxplot(data=data, palette='Set3')
             plt.title(f'Hourly Box Plots for {sheet}', fontsize=16, fontweight='bold')
@@ -287,6 +287,44 @@ class EDA():
 
         logging.info(f"Hourly box plots for {city} plotted and saved to visualizations/box_plots.")
 
+    def daily_mean_plots(city:str):
+        """
+        Public class method that plots daily mean plots for the data and saves the plots to visualizations folder.
+
+        Parameters
+        ----------
+        city : str
+            The city name.
+
+        Returns
+        -------
+        None
+        """     
+        import pandas as pd
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        logging.info(f"Plotting daily mean plots for {city}.")
+
+        monthly_means = pd.read_excel(f'transformed_data/{city}/monthly_daily_means.xlsx')
+
+        month_to_name = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'}
+
+        for month in range(1, 13):
+            name = month_to_name[month]
+            plt.figure(figsize=(10, 6))
+            plt.plot(monthly_means[month], label=name, color='blue', linestyle='-', linewidth=2, marker='o', markersize=6)
+            plt.grid(True, linestyle='--', alpha=0.6)
+            plt.xlabel('Year', fontsize=14, fontweight='bold')
+            plt.ylabel('Electricity (kWh)', fontsize=14, fontweight='bold')
+            plt.title(f'Average Daily Electricity Production in Jakarta [{name}]', fontsize=16, fontweight='bold')
+            plt.xticks(fontsize=12)
+            plt.yticks(fontsize=12)
+            plt.ylim(0, 10000)
+            plt.savefig(f'visualizations/{city}/daily_mean_plots/{month}.png')
+            plt.close()
+
+        logging.info(f"Daily mean plots for {city} plotted and saved to visualizations folder.")
     
 
 class ANOVA():

@@ -19,12 +19,17 @@ def main():
     EDA.hourly_control_charts(city)
     EDA.hourly_box_plots(city)
 
+    EDA.calculate_monthly_means(city, data, 'daily')
+    EDA.daily_mean_plots(city)
+
     logging.info(f"Performing ANOVA tests for {city}")
     ANOVA.normal_anova(city, data, 'hourly')
     ANOVA.fourYblocks_anova(city, data, 'hourly')
     ANOVA.elevenYblocks_anova(city, data, 'hourly')
 
-    
+    ANOVA.normal_anova(city, data, 'daily')
+    ANOVA.fourYblocks_anova(city, data, 'daily')
+    ANOVA.elevenYblocks_anova(city, data, 'daily')
 
 
 if __name__ == "__main__":
