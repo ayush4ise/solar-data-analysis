@@ -12,7 +12,7 @@ from ttest_utils import *
 logging.basicConfig(level=logging.INFO)
 
 def main():
-    city = 'Brisbane'
+    city = 'Tokyo'
 
     File_Map(city)
 
