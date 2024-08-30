@@ -37,6 +37,8 @@ class EDA():
         """
         logging.info(f"Calculating monthly {agg} means for {city}.")
 
+        data = data.copy()
+
         monthly_means = {}
 
         if agg == 'hourly':
@@ -213,7 +215,7 @@ class EDA():
             plt.title(f'Average Daily Electricity Production in {city} [{name}]', fontsize=16, fontweight='bold')
             plt.xticks(fontsize=12)
             plt.yticks(fontsize=12)
-            # plt.ylim(0, 10000)
+            plt.ylim(0, 10000)
             plt.savefig(f'visualizations/{city}/daily_mean_plots/{month}.png')
             plt.close()
 

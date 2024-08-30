@@ -38,6 +38,8 @@ class ANOVA():
         """
         from scipy.stats import f_oneway
 
+        data = data.copy()
+
         logging.info(f"Performing ANOVA for {agg} data for {city}.")
 
         data_anova = {}
@@ -104,6 +106,8 @@ class ANOVA():
         from scipy.stats import f_oneway
 
         logging.info(f"Performing ANOVA for 4-year blocks for {city} for {agg} data.")
+
+        data = data.copy()
 
         data_anova = {}
 
@@ -179,6 +183,8 @@ class ANOVA():
         from scipy.stats import f_oneway
 
         logging.info(f"Performing ANOVA for 11-year blocks for {city} for {agg} data.")
+
+        data = data.copy()
 
         data_anova = {}
 

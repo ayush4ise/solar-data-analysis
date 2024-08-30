@@ -59,6 +59,8 @@ class TTest():
 
         logging.info(f"Performing t-test on {self.city} data.")
 
+        data = data.copy()
+
         data['local_time'] = data['local_time'].dt.year
         data = data.groupby('local_time').sum()
         #data.reset_index(inplace=True)
@@ -117,7 +119,7 @@ class TTest():
                 'Reject H0': []
             }
 
-            for i in range(0, 2):
+            for i in range(0, 3):
                 block1 = data_11Y[f'{1980 + i * 11}-{1990 + i * 11}']
                 block2 = data_11Y[f'{1991 + i * 11}-{2001 + i * 11}']
                 t_stat, p_value = TTest.onetailed_paired_ttest(block1, block2)
