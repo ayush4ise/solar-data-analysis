@@ -8,7 +8,7 @@ class InputFetcher(abc.ABC):
     Abstract class that fetches data from no matter what format and returns a pandas DataFrame.
     """
     @abc.abstractmethod
-    def fetch_data(self, path: str) -> pd.DataFrame:
+    def fetch_data(path: str) -> pd.DataFrame:
         """
         Method that should exist in all instantiations that will fetch the data from the input path.
 
@@ -23,7 +23,7 @@ class CSVInputFetcher(InputFetcher):
     """
     Fetcher for CSV formatted input wher the first 3 rows are metadata
     """
-    def fetch_data(self, path: str) -> pd.DataFrame:
+    def fetch_data(path: str) -> pd.DataFrame:
         """
         Public class method that fetches the data from the csv file from the input path.
 
@@ -49,7 +49,7 @@ class CSVInputFetcher(InputFetcher):
         logging.info(f"Data fetched from {path}.")
         return data
 
-    def city_filename_prefix(self, city: str) -> str:
+    def city_filename_prefix(city: str) -> str:
         """
         Public class method that returns the prefix of the filename of the csv file for the city.
 
@@ -67,7 +67,7 @@ class CSVInputFetcher(InputFetcher):
             return "1980-2023 renewable energy data/ninja_pv_-7.2623_112.7361_"
             
         elif city == "Brisbane":
-            return "1980-2023 renewable energy data/ninja_pv_-27.4665_153.0260_1986.csv"
+            return "1980-2023 renewable energy data/ninja_pv_-27.4665_153.0260_"
         
         elif city == "Tokyo":
             return "1980-2023 renewable energy data/ninja_pv_35.2474_140.4001_"
@@ -76,7 +76,7 @@ class CSVInputFetcher(InputFetcher):
             logging.error(f"City {city} is not supported.")
             raise ValueError
         
-    def fetch_aggregated_data(self, path: str, year_range: list) -> pd.DataFrame:
+    def fetch_aggregated_data(path: str, year_range: list) -> pd.DataFrame:
         """
         Public class method that fetches the data from multiple csv files from the input path and aggregates them into one DataFrame.
 
@@ -97,7 +97,7 @@ class CSVInputFetcher(InputFetcher):
         data = pd.DataFrame()
         
         for year in range(year_range[0], year_range[1]):
-            file_name = os.path.join(path, f"{year}.csv")
+            file_name = path + f"{year}.csv"
             if not os.path.exists(file_name):
                 logging.error(f"File {file_name} does not exist.")
                 raise FileNotFoundError

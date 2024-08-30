@@ -8,6 +8,9 @@ from eda_utils import *
 from anova_utils import *
 from ttest_utils import *
 
+# print logging messages to the console
+logging.basicConfig(level=logging.INFO)
+
 def main():
     city = 'Brisbane'
 
