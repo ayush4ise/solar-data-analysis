@@ -6,6 +6,7 @@ import logging
 from utils import *
 from eda_utils import *
 from anova_utils import *
+from ttest_utils import *
 
 def main():
     city = 'Brisbane'
@@ -37,6 +38,9 @@ def main():
     ANOVA.fourYblocks_anova(city, data, 'daily')
     ANOVA.elevenYblocks_anova(city, data, 'daily')
 
+    logging.info(f"Performing t-tests for {city}")
+    TTest(city).ttest_results(data, 4)
+    TTest(city).ttest_results(data, 11)
 
 
 if __name__ == "__main__":
