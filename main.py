@@ -24,6 +24,10 @@ def main():
     EDA.calculate_monthly_means(city, data, 'daily')
     EDA.daily_mean_plots(city)
 
+    EDA.yearly_plots(city, data, 1)
+    EDA.yearly_plots(city, data, 4)
+    EDA.yearly_plots(city, data, 5)
+
     logging.info(f"Performing ANOVA tests for {city}")
     ANOVA.normal_anova(city, data, 'hourly')
     ANOVA.fourYblocks_anova(city, data, 'hourly')
@@ -32,6 +36,7 @@ def main():
     ANOVA.normal_anova(city, data, 'daily')
     ANOVA.fourYblocks_anova(city, data, 'daily')
     ANOVA.elevenYblocks_anova(city, data, 'daily')
+
 
 
 if __name__ == "__main__":

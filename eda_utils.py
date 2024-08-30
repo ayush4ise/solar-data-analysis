@@ -219,7 +219,7 @@ class EDA():
 
         logging.info(f"Daily mean plots for {city} plotted and saved to visualizations folder.")
 
-    def yearly_plots(city:str, data:pd.DataFrame):
+    def yearly_plots(city:str, data:pd.DataFrame, agg:int = 1):
         """
         Public class method that plots hourly box plots for the data and saves the plots to visualizations folder.
 
@@ -227,6 +227,10 @@ class EDA():
         ----------
         city : str
             The city name.
+        data : pd.DataFrame
+            The data in a pandas DataFrame.
+        agg : int
+            The aggregation level of the data. Default is 1. Can be 1 , 4 or 5.
 
         Returns
         -------
@@ -234,12 +238,35 @@ class EDA():
         """
         import matplotlib.pyplot as plt
 
-        logging.info(f"Plotting yearly plots for {city}.")
+        logging.info(f"Plotting yearly plots for {city} with {agg} yearly aggregation.")
 
         data['local_time'] = data['local_time'].dt.year
         data = data.groupby('local_time').sum()
         #data.reset_index(inplace=True)
         data = data.iloc[:-1,:]
+
+        if agg == 1:
+            data = data
+
+        elif agg == 4:
+            data_4Y = {}
+
+            for i in range(1980, 2024, 4):
+                data_4Y[f'{i}-{i+3}'] = data.loc[i:i+3, 'electricity'].mean()
+            data_4Y = pd.Series(data_4Y)
+            data = data_4Y
+
+        elif agg == 5:
+            data_5Y = {}
+
+            for i in range(1984, 2024, 5):
+                data_5Y[f'{i}-{i+4}'] = data.loc[i:i+4, 'electricity'].mean()
+            data_5Y = pd.Series(data_5Y)
+            data = data_5Y
+
+        else:
+            logging.error(f"Aggregation level {agg} is not supported.")
+            raise ValueError
 
         # Create the plot with a larger figure size
         plt.figure(figsize=(20,10))
@@ -253,7 +280,7 @@ class EDA():
         # Customizing the labels and title
         plt.xlabel('Year', fontsize=14, fontweight='bold')
         plt.ylabel('Electricity ($10^6$ kWh)', fontsize=14, fontweight='bold')
-        plt.title(f'Yearly Electricity Production in {city}', fontsize=16, fontweight='bold')
+        plt.title(f'{agg} - Yearly Electricity Production in {city}', fontsize=16, fontweight='bold')
 
         # Adjusting the ticks
         plt.xticks(fontsize=12)
@@ -263,7 +290,7 @@ class EDA():
         plt.ylim(0, 2500000)
 
         # Save the plot
-        plt.savefig(f'visualizations/{city}/yearly_plot.png')
+        plt.savefig(f'visualizations/{city}/{agg}_yearly_plot.png')
         plt.close()
 
-        logging.info(f"Yearly plot for {city} plotted and saved to visualizations folder.")
+        logging.info(f"Yearly plot with {agg} yearly aggregation for {city} plotted and saved to visualizations folder.")
