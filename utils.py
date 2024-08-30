@@ -125,7 +125,7 @@ class EDA():
         """
         self.city = city
 
-    def calculate_monthly_means(city:str, data:pd.DataFrame):
+    def calculate_monthly_means(city:str, data:pd.DataFrame, agg:str='hourly'):
         """
         Public class method that calculates the monthly means of the data and saves the data to monthly sheet in the excel file.
 
@@ -135,30 +135,52 @@ class EDA():
             The city name.
         data : pd.DataFrame
             The data in a pandas DataFrame.
+        agg : str
+            The aggregation level of the data. Default is 'hourly'. Can be 'daily' or 'hourly'.
 
         Returns
         -------
         None
         """
-        logging.info(f"Calculating monthly means for {city}.")
+        logging.info(f"Calculating monthly {agg} means for {city}.")
 
         monthly_means = {}
 
-        for month in range(1,13):
-            for hour in range(24):
-                monthly_means[(month, hour)] = [data[(data['local_time'].dt.year == year) & (data['local_time'].dt.month == month) & (data['local_time'].dt.hour == hour)]['electricity'].mean() for year in range(1981, 2024)]
+        if agg == 'hourly':
+            for month in range(1,13):
+                for hour in range(24):
+                    monthly_means[(month, hour)] = [data[(data['local_time'].dt.month == month) & (data['local_time'].dt.hour == hour)]['electricity'].mean() for year in range(1980, 2024)]
+            
+            monthly_means = pd.DataFrame(monthly_means, index=range(1980, 2024))
 
-        monthly_means = pd.DataFrame(monthly_means, index=range(1980, 2024))
+            month_to_name = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'}
 
-        month_to_name = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'}
+            monthly_means.xs(1, level=0, axis=1).to_excel(f'transformed_data/{city}/monthly_{agg}_means.xlsx', sheet_name='January')
+            for month in range(2, 13):
+                # write to the same excel file
+                with pd.ExcelWriter(f'transformed_data/{city}/monthly_{agg}_means.xlsx', engine='openpyxl', mode='a') as writer:
+                    monthly_means.xs(month, level=0, axis=1).to_excel(writer, sheet_name=month_to_name[month])
 
-        monthly_means.xs(1, level=0, axis=1).to_excel(f'transformed_data/{city}/monthly_means.xlsx', sheet_name='January')
-        for month in range(2, 13):
-            # write to the same excel file
-            with pd.ExcelWriter(f'transformed_data/{city}/monthly_means.xlsx', engine='openpyxl', mode='a') as writer:
-                monthly_means.xs(month, level=0, axis=1).to_excel(writer, sheet_name=month_to_name[month])
+            logging.info(f"Monthly {agg} means for {city} calculated and saved to transformed_data/{city}/monthly_{agg}_means.xlsx.")
 
-        logging.info(f"Monthly means for {city} calculated and saved to transformed_data/{city}/monthly_means.xlsx.")
+        elif agg == 'daily':
+            data_jakarta['local_time'] = data_jakarta['local_time'].dt.date
+            data_jakarta = data_jakarta.groupby('local_time').sum()
+            data_jakarta.reset_index(inplace=True)
+            data_jakarta['local_time'] = pd.to_datetime(data_jakarta['local_time'])
+
+            for month in range(1,13):
+                monthly_means[month] = [data_jakarta[(data_jakarta['local_time'].dt.year == year) & (data_jakarta['local_time'].dt.month == month)]['electricity'].mean() for year in range(1980, 2024)]
+
+            monthly_means = pd.DataFrame(monthly_means, index=range(1980, 2024))
+
+            monthly_means.to_excel(f'transformed_data/{city}/monthly_{agg}_means.xlsx')
+
+            logging.info(f"Monthly {agg} means for {city} calculated and saved to transformed_data/{city}/monthly_{agg}_means.xlsx.")
+
+        else:
+            logging.error(f"Aggregation level {agg} is not supported.")
+            raise ValueError
 
 
     def hourly_control_charts(city:str):
@@ -308,7 +330,7 @@ class ANOVA():
         for month in range(1, 13):
             data_anova[month] = []
             for hour in range(24):
-                data = [list(data[(data['local_time'].dt.year == year) & (data['local_time'].dt.month == month) & (data['local_time'].dt.hour == hour)]['electricity']) for year in range(1981, 2024)]
+                data = [list(data[(data['local_time'].dt.year == year) & (data['local_time'].dt.month == month) & (data['local_time'].dt.hour == hour)]['electricity']) for year in range(1980, 2024)]
                 f, p = f_oneway(*data)
                 data_anova[month].append([f, p])
 
@@ -326,7 +348,7 @@ class ANOVA():
         logging.info(f"ANOVA for hourly data for {city} performed and results saved to results/{city}/hourly_anova.xlsx.")
 
 
-    def fourYblocks_anova(city:str, data:pd.DataFrame):
+    def fourYblocks_anova(city:str, data:pd.DataFrame, agg:str='daily'):
         """
         Public class method that performs ANOVA analysis on the data to check if the means of the data (for a given 4-year block) are different for different years
         and saves the results to results folder.
@@ -337,6 +359,8 @@ class ANOVA():
             The city name.
         data : pd.DataFrame
             The data in a pandas DataFrame.
+        agg : str
+            The aggregation level of the data. Default is 'daily'. Can be 'daily' or 'hourly'.
 
         Returns
         -------
@@ -344,7 +368,7 @@ class ANOVA():
         """
         from scipy.stats import f_oneway
 
-        logging.info(f"Performing ANOVA for 4-year blocks for {city}.")
+        logging.info(f"Performing ANOVA for 4-year blocks for {city} for {agg} data.")
 
         data_anova = {}
 
@@ -418,3 +442,6 @@ class ANOVA():
             p_values.to_excel(writer, sheet_name='P-Values')
 
         logging.info(f"ANOVA for 11-year blocks for {city} performed and results saved to results/{city}/11Yblocks_anova.xlsx.")
+
+
+

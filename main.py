@@ -14,7 +14,8 @@ def main():
     data['local_time'] = pd.to_datetime(data['local_time'])
 
     logging.info(f"Performing EDA for {city}")
-    EDA.calculate_monthly_means(city, data)
+
+    EDA.calculate_monthly_means(city, data, 'hourly')
     EDA.hourly_control_charts(city)
     EDA.hourly_box_plots(city)
 
